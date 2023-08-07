@@ -1,0 +1,27 @@
+var username = 'admin'
+var password = '123456';
+
+gonative.auth.status({'callbackFunction': gonative_status_afterlogin});
+
+function gonative_status_afterlogin(data) {
+    if (data && data.hasTouchId) {
+    	var secret = JSON.stringify({
+            username: username,
+            password: password
+        });
+        
+        gonative.auth.save({'secret': secret});
+    }
+}
+
+// Promise method
+gonative.auth.status().then(function (result) {
+    if (result && result.hasTouchId) {
+    	var secret = JSON.stringify({
+            username: username,
+            password: password
+        });
+        
+        gonative.auth.save({'secret': secret});
+    }
+}
