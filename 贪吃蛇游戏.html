@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>贪吃蛇游戏</title>
+    <style>
+        #game-board {
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            position: relative;
+        }
+        .snake {
+            width: 25px;
+            height: 25px;
+            background-color: green;
+            position: absolute;
+        }
+        #fruit {
+            width: 25px;
+            height: 25px;
+            background-color: red;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h1>贪吃蛇游戏</h1>
+    <div id="game-board"></div>
+    <script>
+        // 获取游戏区域元素
+        var gameBoard = document.getElementById("game-board");
+
+        // 设置游戏区域大小
+        var width = 20;
+        var height = 20;
+        gameBoard.style.width = width * 20 + "px";
+        gameBoard.style.height = height * 20 + "px";
+
+        // 初始化游戏状态
+        var snake = [{ x: 10, y: 10 }];
+        var direction = "right";
+        var fruit = { x: 5, y: 5 };
+        var score = 0;
+
+        // 绘制游戏区域
+        function drawGameBoard() {
+            gameBoard.innerHTML = "";
+
+            // 绘制蛇
+            for (var i = 0; i < snake.length; i++) {
+                var snakeElement = document.createElement("div");
+                snakeElement.className = "snake";
+                snakeElement.style.left = snake[i].x * 20 + "px";
+                snakeElement.style.top = snake[i].y * 20 + "px";
+                gameBoard.appendChild(snakeElement);
+            }
+
+            // 绘制食物
+            var fruitElement = document.createElement("div");
+            fruitElement.id = "fruit";
+            fruitElement.style.left = fruit.x * 20 + "px";
+            fruitElement.style.top = fruit.y * 20 + "px";
+            gameBoard.appendChild(fruitElement);
+        }
+
+        // 移动蛇
+        function moveSnake() {
+            var head = { x: snake[0].x, y: snake[0].y };
+            switch (direction) {
+                case "up":
+                    head.y--;
+                    break;
+                case "down":
+                    head.y++;
+                    break;
+                case "left":
+                    head.x--;
+                    break;
+                case "right":
+                    head.x++;
+                    break;
+            }
+            snake.unshift(head);
+
+            // 检查是否吃到食物
+            if (head.x === fruit.x && head.y === fruit.y) {
+                score++;
+                generateFruit();
+            } else {
+                snake.pop();
+            }
+
+            // 检查游戏结束条件
+            if (head.x < 0 || head.x >= width || head.y < 0 || head.y >= height || checkCollision()) {
+                clearInterval(gameInterval);
+                alert("游戏结束！得分：" + score);
+            }
+
+            drawGameBoard();
+        }
+
+        // 生成新的食物
+        function generateFruit() {
+            fruit.x = Math.floor(Math.random() * width);
+            fruit.y = Math.floor(Math.random() * height);
+        }
+
+        // 检查蛇是否与自身相撞
+        function checkCollision() {
+            var head = snake[0];
+            for (var i = 1; i < snake.length; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 处理键盘按键事件
+        document.addEventListener("keydown", function (event) {
+            switch (event.key) {
+                case "ArrowUp":
+                    if (direction !== "down")
+                        direction = "up";
+                    break;
+                case "ArrowDown":
+                    if (direction !== "up")
+                        direction = "down";
+                    break;
+                case "ArrowLeft":
+                    if (direction !== "right")
+                        direction = "left";
+                    break;
+                case "ArrowRight":
+                    if (direction !== "left")
+                        direction = "right";
+                    break;
+            }
+        });
+
+        // 开始游戏
+        var gameInterval = setInterval(moveSnake, 200);
+    </script>
+</body>
+</html>
